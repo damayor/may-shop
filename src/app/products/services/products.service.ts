@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { ProductsResponse } from '@products/interfaces/product.interface';
+import { Product, ProductsResponse } from '@products/interfaces/product.interface';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
 
@@ -37,7 +37,13 @@ export class ProductsService {
   }
 
 
+  getProductByIdSlug(idSlug: string) : Observable<Product> {
 
+    return this.http
+      .get<Product>(`${baseUrl}/products/${idSlug}`)
+      .pipe(tap((resp) => console.log(resp)))
+
+  }
 
 
 }

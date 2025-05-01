@@ -1,2 +1,30 @@
 <h1></h1>
-<!-- <p>{{product}}</p> -->
+
+@if (productsResource.isLoading()) {
+  <div class="flex justify-center items-center h-screen">
+    <div class="loading loading-spinner loading-lg"></div>
+  </div>
+}
+
+@if (productsResource.hasValue()) {
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+    <!-- Imagenes -->
+    <product-carousel [images]="productsResource.value().images"></product-carousel>
+
+    <!-- Titlo -->
+    <div>
+      <h2 class="text-2xl font-bold font-montserrat">
+        {{productsResource.value().title}}
+      </h2>
+    </div>
+
+    <div class="divider"></div>
+
+    <p>{{productsResource.value().description}}</p>
+
+  </div>
+}
+
+
+<p>{{productsResource.value()?.title}}</p>

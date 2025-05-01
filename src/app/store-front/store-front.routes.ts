@@ -19,7 +19,7 @@ export const storeFrontRoutes: Routes = [
         component: GenderPageComponent,
       },
       {
-        path:'prduct/:idSlug',
+        path:'product/:idSlug',
         component: ProductPageComponent,
       },
       {
