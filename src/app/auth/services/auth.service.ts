@@ -37,6 +37,7 @@ export class AuthService {
 
   user = computed(() => this._user())
   token = computed(this._token)
+  isAdmin = computed(() => this._user()?.roles.includes('admin') ?? false)
 
 
 
@@ -44,6 +45,18 @@ export class AuthService {
     return this.http.post<AuthResponse>(`${baseUrl}/auth/login`, {
       email: email,
       password: password,
+    }).pipe(
+      map( resp => this.handleAuthSuccess(resp)   ),
+      catchError((error: any) =>  this.handleAuthError(error))
+    )
+  }
+
+
+  register(email: string, password: string, fullName: string): Observable<boolean> {
+    return this.http.post<AuthResponse>(`${baseUrl}/auth/register`, {
+      email: email,
+      password: password,
+      fullName: fullName,
     }).pipe(
       map( resp => this.handleAuthSuccess(resp)   ),
       catchError((error: any) =>  this.handleAuthError(error))
@@ -76,7 +89,7 @@ export class AuthService {
     this._user.set(null);
     this._authStatus.set('not-authenticated');
     this._token.set(null);
-    // localStorage.removeItem('token');
+    localStorage.removeItem('token');
 
   }
 
