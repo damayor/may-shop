@@ -22,7 +22,12 @@ export class ProductImagePipe implements PipeTransform {
     if(value.length == 0 )
         return noImagePath;
     else if(typeof value == 'string')
-      return `${baseUrl}/files/product/${value}`
+    {
+      if(value.startsWith("blob"))
+        return value;
+      else
+        return `${baseUrl}/files/product/${value}`
+    }
 
     return `${baseUrl}/files/product/${value.at(0)}`;
 

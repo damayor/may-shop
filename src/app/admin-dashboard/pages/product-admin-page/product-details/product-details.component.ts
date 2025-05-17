@@ -1,4 +1,4 @@
-import { Component, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { Product } from '@products/interfaces/product.interface';
 import { ProductCarouselComponent } from "../../../../store-front/components/product-carousel/product-carousel.component";
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -22,6 +22,13 @@ export class ProductDetailsComponent {
   productsService = inject(ProductsService);
 
   wasSaved = signal<boolean>(false);
+  imageFileList: FileList | undefined = undefined;
+  tempImages = signal<string[]>([]);
+
+  imagesToCarousel = computed(() => {
+    const currentProductImages = [...this.product().images, ...this.tempImages()]
+    return currentProductImages;
+  })
 
   productForm = this.fb.group({
     title: ['', Validators.required],
@@ -62,7 +69,7 @@ export class ProductDetailsComponent {
     const productLike: Partial<Product> = {
       ...(formValue as any) ,
       tags:
-        formValue.tags?.toLowerCase() //Bug esta mandando error si solo hay una cosita
+        formValue.tags?.toLowerCase() //Todo Bug esta mandando error si solo hay una cosita
         .split(',')
         .map((tag) => tag.trim() ?? [])
     }
@@ -71,11 +78,11 @@ export class ProductDetailsComponent {
     if(this.product().id == 'new') {
 
       const product = await firstValueFrom(
-        this.productsService.createProduct( productLike)
+        this.productsService.createProduct( productLike, this.imageFileList)
       )
 
       this.router.navigate(['/admin/products', product.id])
-      this.wasSaved.set(true);
+      this.wasSaved.set(true); //ToDo no esta saliendo el ni desaparece..
       // setTimeout(() => {
       //   this.wasSaved.set(false);
       // },5000);
@@ -83,7 +90,7 @@ export class ProductDetailsComponent {
     }
     else {
       this.productsService
-      .updateProduct(this.product().id, productLike)
+      .updateProduct(this.product().id, productLike, this.imageFileList)
       .subscribe(
         product => {
           console.log("producto actualizado!!");
@@ -108,4 +115,20 @@ export class ProductDetailsComponent {
 
     this.productForm.patchValue({sizes:currentSizes})
   }
+
+  onFilesChanged(event: Event) {
+    const fileList = (event.target as HTMLInputElement).files
+    this.tempImages.set([]);
+    this.imageFileList = fileList ?? undefined;
+    console.log({fileList})
+
+
+    const imageUrls = Array.from( fileList ?? []).map((file) =>
+      URL.createObjectURL(file)
+    );
+
+    console.log({imageUrls})
+    this.tempImages.set(imageUrls)
+  }
+
 }

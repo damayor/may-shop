@@ -117,9 +117,22 @@
       </button>
     </div>
 
-    <product-carousel [images]="product().images" />
+    <product-carousel [images]="imagesToCarousel()" />
 
-    <input type="file" class="file-input file-input-bordered w-full mt-4" />
+    <input
+      type="file"
+      multiple
+      accept="image/*"
+      class="file-input file-input-bordered w-full mt-4"
+      (change)="onFilesChanged($event)"
+
+    />
+
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2">
+      @for (image of tempImages(); track $index) {
+        <img [src]="image" alt="" class="w-full object-cover rounded-md">
+      }
+    </div>
   </div>
 </form>
 
