@@ -82,7 +82,6 @@ export class ProductsService {
       .pipe(tap((resp) => console.log(resp)))
   }
 
-  //ToDo, cargue las imagenes  con el switchMap
   createProduct(productLike: Partial<Product>, imageFileList?: FileList): Observable<Product> {
 
     const currentImages = productLike.images ?? []; //si hay imagenes antes? ps total lo va a crear...
@@ -98,10 +97,6 @@ export class ProductsService {
         ),
         tap((product) => this.updateProductCache(product))
       )
-
-    // return this.http
-    //   .post<Product>(`${baseUrl}/products`, productLike)
-    //   .pipe( tap((product) => this.updateProductCache(product)))
 
   }
 
@@ -138,10 +133,6 @@ export class ProductsService {
     })
 
   }
-
-  //Tome un FileList y subalo!
-
-  // POST api/files/product
 
   uploadImages(images?: FileList): Observable<string[]> {
     if(!images) return of([]);
